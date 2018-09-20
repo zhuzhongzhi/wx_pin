@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinGroupMemberMapper">
+    
+	<sql id="pinGroupMemberColumns">
+		a.group_id AS "groupId",
+		a.member_id AS "memberId"
+	</sql>
+	
+	<sql id="pinGroupMemberJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinGroupMember" >
+		SELECT 
+			<include refid="pinGroupMemberColumns"/>
+		FROM pin_group_member a
+		<include refid="pinGroupMemberJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinGroupMember" >
+		SELECT 
+			<include refid="pinGroupMemberColumns"/>
+		FROM pin_group_member a
+		<include refid="pinGroupMemberJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="groupId != null and groupId != ''">
+				AND a.group_id = #{groupId}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				AND a.member_id = #{memberId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinGroupMember" >
+		SELECT 
+			<include refid="pinGroupMemberColumns"/>
+		FROM pin_group_member a
+		<include refid="pinGroupMemberJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_group_member(
+			group_id,
+			member_id
+		) VALUES (
+			#{groupId},
+			#{memberId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_group_member SET 	
+			group_id = #{groupId},
+			member_id = #{memberId}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_group_member
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_group_member SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinGroupMember" statementType="STATEMENT">
+		select * FROM pin_group_member  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinWxCouponMapper">
+    
+	<sql id="pinWxCouponColumns">
+		a.id AS "id",
+		a.stock_id AS "stockId",
+		a.face_value AS "faceValue",
+		a.effect_type AS "effectType",
+		a.start_time AS "startTime",
+		a.end_time AS "endTime",
+		a.condition AS "condition",
+		a.description AS "description"
+	</sql>
+	
+	<sql id="pinWxCouponJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinWxCoupon" >
+		SELECT 
+			<include refid="pinWxCouponColumns"/>
+		FROM pin_wx_coupon a
+		<include refid="pinWxCouponJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinWxCoupon" >
+		SELECT 
+			<include refid="pinWxCouponColumns"/>
+		FROM pin_wx_coupon a
+		<include refid="pinWxCouponJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="stockId != null and stockId != ''">
+				AND a.stock_id = #{stockId}
+			</if>
+			<if test="effectType != null and effectType != ''">
+				AND a.effect_type = #{effectType}
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND a.start_time = #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND a.end_time = #{endTime}
+			</if>
+			<if test="condition != null and condition != ''">
+				AND a.condition = #{condition}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinWxCoupon" >
+		SELECT 
+			<include refid="pinWxCouponColumns"/>
+		FROM pin_wx_coupon a
+		<include refid="pinWxCouponJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_wx_coupon(
+			id,
+			stock_id,
+			face_value,
+			effect_type,
+			start_time,
+			end_time,
+			condition,
+			description
+		) VALUES (
+			#{id},
+			#{stockId},
+			#{faceValue},
+			#{effectType},
+			#{startTime},
+			#{endTime},
+			#{condition},
+			#{description}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_wx_coupon SET 	
+			stock_id = #{stockId},
+			face_value = #{faceValue},
+			effect_type = #{effectType},
+			start_time = #{startTime},
+			end_time = #{endTime},
+			condition = #{condition},
+			description = #{description}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_wx_coupon
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_wx_coupon SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinWxCoupon" statementType="STATEMENT">
+		select * FROM pin_wx_coupon  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

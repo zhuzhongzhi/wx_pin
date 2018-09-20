@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinGroupMapper">
+    
+	<sql id="pinGroupColumns">
+		a.id AS "id",
+		a.master_id AS "masterId",
+		a.create_time AS "createTime",
+		a.member AS "member",
+		a.total AS "total",
+		a.status AS "status",
+		a.expire AS "expire",
+		a.end_time AS "endTime",
+		a.rule_id AS "ruleId",
+		a.product_id AS "productId",
+		a.wxacode AS "wxacode",
+		a.product_name AS "productName"
+	</sql>
+	
+	<sql id="pinGroupJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinGroup" >
+		SELECT 
+			<include refid="pinGroupColumns"/>
+		FROM pin_group a
+		<include refid="pinGroupJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinGroup" >
+		SELECT 
+			<include refid="pinGroupColumns"/>
+		FROM pin_group a
+		<include refid="pinGroupJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND a.create_time = #{createTime}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="ruleId != null and ruleId != ''">
+				AND a.rule_id = #{ruleId}
+			</if>
+			<if test="productId != null and productId != ''">
+				AND a.product_id = #{productId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinGroup" >
+		SELECT 
+			<include refid="pinGroupColumns"/>
+		FROM pin_group a
+		<include refid="pinGroupJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_group(
+			id,
+			master_id,
+			create_time,
+			member,
+			total,
+			status,
+			expire,
+			end_time,
+			rule_id,
+			product_id,
+			wxacode,
+			product_name
+		) VALUES (
+			#{id},
+			#{masterId},
+			#{createTime},
+			#{member},
+			#{total},
+			#{status},
+			#{expire},
+			#{endTime},
+			#{ruleId},
+			#{productId},
+			#{wxacode},
+			#{productName}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_group SET 	
+			master_id = #{masterId},
+			create_time = #{createTime},
+			member = #{member},
+			total = #{total},
+			status = #{status},
+			expire = #{expire},
+			end_time = #{endTime},
+			rule_id = #{ruleId},
+			product_id = #{productId},
+			wxacode = #{wxacode},
+			product_name = #{productName}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_group
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_group SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinGroup" statementType="STATEMENT">
+		select * FROM pin_group  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

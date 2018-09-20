@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinMemberMapper">
+    
+	<sql id="pinMemberColumns">
+		a.id AS "id",
+		a.create_time AS "createTime",
+		a.unionid AS "unionid",
+		a.openid AS "openid",
+		a.name AS "name",
+		a.sex AS "sex",
+		a.headimgurl AS "headimgurl",
+		a.status AS "status"
+	</sql>
+	
+	<sql id="pinMemberJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinMember" >
+		SELECT 
+			<include refid="pinMemberColumns"/>
+		FROM pin_member a
+		<include refid="pinMemberJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinMember" >
+		SELECT 
+			<include refid="pinMemberColumns"/>
+		FROM pin_member a
+		<include refid="pinMemberJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND a.create_time = #{createTime}
+			</if>
+			<if test="unionid != null and unionid != ''">
+				AND a.unionid = #{unionid}
+			</if>
+			<if test="openid != null and openid != ''">
+				AND a.openid = #{openid}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinMember" >
+		SELECT 
+			<include refid="pinMemberColumns"/>
+		FROM pin_member a
+		<include refid="pinMemberJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_member(
+			id,
+			create_time,
+			unionid,
+			openid,
+			name,
+			sex,
+			headimgurl,
+			status
+		) VALUES (
+			#{id},
+			#{createTime},
+			#{unionid},
+			#{openid},
+			#{name},
+			#{sex},
+			#{headimgurl},
+			#{status}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_member SET 	
+			create_time = #{createTime},
+			unionid = #{unionid},
+			openid = #{openid},
+			name = #{name},
+			sex = #{sex},
+			headimgurl = #{headimgurl},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_member
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_member SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinMember" statementType="STATEMENT">
+		select * FROM pin_member  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

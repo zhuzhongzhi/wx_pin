@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinDeliverInfoMapper">
+    
+	<sql id="pinDeliverInfoColumns">
+		a.id AS "id",
+		a.group_id AS "groupId",
+		a.logistics_codes AS "logisticsCodes",
+		a.create_time AS "createTime",
+		a.deliver_type AS "deliverType",
+		a.province AS "province",
+		a.city AS "city",
+		a.district AS "district",
+		a.address AS "address",
+		a.recv_name AS "recvName",
+		a.status AS "status",
+		a.recv_phone AS "recvPhone",
+		a.member_id AS "memberId",
+		a.status AS "groupStatus"
+	</sql>
+	
+	<sql id="pinDeliverInfoJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinDeliverInfo" >
+		SELECT 
+			<include refid="pinDeliverInfoColumns"/>
+		FROM pin_deliver_info a
+		<include refid="pinDeliverInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinDeliverInfo" >
+		SELECT 
+			<include refid="pinDeliverInfoColumns"/>
+		FROM pin_deliver_info a
+		<include refid="pinDeliverInfoJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="groupId != null and groupId != ''">
+				AND a.group_id = #{groupId}
+			</if>
+			<if test="logisticsCodes != null and logisticsCodes != ''">
+				AND a.logistics_codes = #{logisticsCodes}
+			</if>
+			<if test="recvName != null and recvName != ''">
+				AND a.recv_name = #{recvId}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="recvPhone != null and recvPhone != ''">
+				AND a.recv_phone = #{recvPhone}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				AND a.member_id = #{memberId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinDeliverInfo" >
+		SELECT 
+			<include refid="pinDeliverInfoColumns"/>
+		FROM pin_deliver_info a
+		<include refid="pinDeliverInfoJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_deliver_info(
+			id,
+			group_id,
+			logistics_codes,
+			create_time,
+			deliver_type,
+			province,
+			city,
+			district,
+			address,
+			recv_name,
+			status,
+			recv_phone,
+			member_id
+		) VALUES (
+			#{id},
+			#{groupId},
+			#{logisticsCodes},
+			#{createTime},
+			#{deliverType},
+			#{province},
+			#{city},
+			#{district},
+			#{address},
+			#{recvName},
+			#{status},
+			#{recvPhone},
+			#{memberId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_deliver_info SET 	
+			group_id = #{groupId},
+			logistics_codes = #{logisticsCodes},
+			create_time = #{createTime},
+			deliver_type = #{deliverType},
+			province = #{province},
+			city = #{city},
+			district = #{district},
+			address = #{address},
+			recv_name = #{recvName},
+			status = #{status},
+			recv_phone = #{recvPhone},
+			member_id = #{memberId}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_deliver_info
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_deliver_info SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinDeliverInfo" statementType="STATEMENT">
+		select * FROM pin_deliver_info  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

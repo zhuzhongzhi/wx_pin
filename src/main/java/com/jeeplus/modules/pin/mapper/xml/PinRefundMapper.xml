@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinRefundMapper">
+    
+	<sql id="pinRefundColumns">
+		a.id AS "id",
+		a.group_id AS "groupId",
+		a.member_id AS "memberId",
+		a.transaction_id AS "transactionId",
+		a.out_trade_no AS "outTradeNo",
+		a.refund_id AS "refundId",
+		a.out_refund_no AS "outRefundNo",
+		a.total_fee AS "totalFee",
+		a.refund_fee AS "refundFee",
+		a.settlement_total_fee AS "settlementTotalFee",
+		a.settlement_refund_fee AS "settlementRefundFee",
+		a.refund_status AS "refundStatus",
+		a.success_time AS "successTime",
+		a.refund_recv_accout AS "refundRecvAccout",
+		a.refund_account AS "refundAccount",
+		a.refund_request_source AS "refundRequestSource"
+	</sql>
+	
+	<sql id="pinRefundJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinRefund" >
+		SELECT 
+			<include refid="pinRefundColumns"/>
+		FROM pin_refund a
+		<include refid="pinRefundJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinRefund" >
+		SELECT 
+			<include refid="pinRefundColumns"/>
+		FROM pin_refund a
+		<include refid="pinRefundJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="groupId != null and groupId != ''">
+				AND a.group_id = #{groupId}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				AND a.member_id = #{memberId}
+			</if>
+			<if test="transactionId != null and transactionId != ''">
+				AND a.transaction_id = #{transactionId}
+			</if>
+			<if test="outTradeNo != null and outTradeNo != ''">
+				AND a.out_trade_no = #{outTradeNo}
+			</if>
+			<if test="refundId != null and refundId != ''">
+				AND a.refund_id = #{refundId}
+			</if>
+			<if test="outRefundNo != null and outRefundNo != ''">
+				AND a.out_refund_no = #{outRefundNo}
+			</if>
+			<if test="refundStatus != null and refundStatus != ''">
+				AND a.refund_status = #{refundStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinRefund" >
+		SELECT 
+			<include refid="pinRefundColumns"/>
+		FROM pin_refund a
+		<include refid="pinRefundJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_refund(
+			id,
+			group_id,
+			member_id,
+			transaction_id,
+			out_trade_no,
+			refund_id,
+			out_refund_no,
+			total_fee,
+			refund_fee,
+			settlement_total_fee,
+			settlement_refund_fee,
+			refund_status,
+			success_time,
+			refund_recv_accout,
+			refund_account,
+			refund_request_source
+		) VALUES (
+			#{id},
+			#{groupId},
+			#{memberId},
+			#{transactionId},
+			#{outTradeNo},
+			#{refundId},
+			#{outRefundNo},
+			#{totalFee},
+			#{refundFee},
+			#{settlementTotalFee},
+			#{settlementRefundFee},
+			#{refundStatus},
+			#{successTime},
+			#{refundRecvAccout},
+			#{refundAccount},
+			#{refundRequestSource}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_refund SET 	
+			group_id = #{groupId},
+			member_id = #{memberId},
+			transaction_id = #{transactionId},
+			out_trade_no = #{outTradeNo},
+			refund_id = #{refundId},
+			out_refund_no = #{outRefundNo},
+			total_fee = #{totalFee},
+			refund_fee = #{refundFee},
+			settlement_total_fee = #{settlementTotalFee},
+			settlement_refund_fee = #{settlementRefundFee},
+			refund_status = #{refundStatus},
+			success_time = #{successTime},
+			refund_recv_accout = #{refundRecvAccout},
+			refund_account = #{refundAccount},
+			refund_request_source = #{refundRequestSource}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_refund
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_refund SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinRefund" statementType="STATEMENT">
+		select * FROM pin_refund  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

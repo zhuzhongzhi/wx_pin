@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinRuleMapper">
+    
+	<sql id="pinRuleColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.members AS "members",
+		a.price AS "price",
+		a.expire AS "expire",
+		a.description AS "description",
+		a.product_id AS "productId",
+		a.master_freight AS "masterFreight",
+		a.member_freight AS "memberFreight"
+	</sql>
+	
+	<sql id="pinRuleJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinRule" >
+		SELECT 
+			<include refid="pinRuleColumns"/>
+		FROM pin_rule a
+		<include refid="pinRuleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinRule" >
+		SELECT 
+			<include refid="pinRuleColumns"/>
+		FROM pin_rule a
+		<include refid="pinRuleJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="productId != null and productId != ''">
+				AND a.product_id = #{productId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinRule" >
+		SELECT 
+			<include refid="pinRuleColumns"/>
+		FROM pin_rule a
+		<include refid="pinRuleJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_rule(
+			id,
+			name,
+			members,
+			price,
+			expire,
+			description,
+			product_id,
+			master_freight,
+			member_freight
+		) VALUES (
+			#{id},
+			#{name},
+			#{members},
+			#{price},
+			#{expire},
+			#{description},
+			#{productId},
+			#{masterFreight},
+			#{memberFreight}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_rule SET 	
+			name = #{name},
+			members = #{members},
+			price = #{price},
+			expire = #{expire},
+			description = #{description},
+			product_id = #{productId},
+			master_freight = #{masterFreight},
+			member_freight = #{memberFreight}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_rule
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_rule SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinRule" statementType="STATEMENT">
+		select * FROM pin_rule  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

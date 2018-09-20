@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinOrderMapper">
+    
+	<sql id="pinOrderColumns">
+		a.id AS "id",
+		a.create_time AS "createTime",
+		a.end_time AS "endTime",
+		a.group_id AS "groupId",
+		a.member_id AS "memberId",
+		a.fee AS "fee",
+		a.status AS "status",
+		a.trade_no AS "tradeNo"
+	</sql>
+	
+	<sql id="pinOrderJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinOrder" >
+		SELECT 
+			<include refid="pinOrderColumns"/>
+		FROM pin_order a
+		<include refid="pinOrderJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinOrder" >
+		SELECT 
+			<include refid="pinOrderColumns"/>
+		FROM pin_order a
+		<include refid="pinOrderJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="createTime != null and createTime != ''">
+				AND a.create_time = #{createTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND a.end_time = #{endTime}
+			</if>
+			<if test="groupId != null and groupId != ''">
+				AND a.group_id = #{groupId}
+			</if>
+			<if test="memberId != null and memberId != ''">
+				AND a.member_id = #{memberId}
+			</if>
+			<if test="fee != null and fee != ''">
+				AND a.fee = #{fee}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="tradeNo != null and tradeNo != ''">
+				AND a.trade_no = #{tradeNo}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinOrder" >
+		SELECT 
+			<include refid="pinOrderColumns"/>
+		FROM pin_order a
+		<include refid="pinOrderJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_order(
+			id,
+			create_time,
+			end_time,
+			group_id,
+			member_id,
+			fee,
+			status,
+			trade_no
+		) VALUES (
+			#{id},
+			#{createTime},
+			#{endTime},
+			#{groupId},
+			#{memberId},
+			#{fee},
+			#{status},
+			#{tradeNo}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_order SET 	
+			create_time = #{createTime},
+			end_time = #{endTime},
+			group_id = #{groupId},
+			member_id = #{memberId},
+			fee = #{fee},
+			status = #{status},
+			trade_no = #{tradeNo}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_order
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_order SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinOrder" statementType="STATEMENT">
+		select * FROM pin_order  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>

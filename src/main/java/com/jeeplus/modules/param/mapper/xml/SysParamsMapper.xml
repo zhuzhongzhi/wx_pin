@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.param.mapper.SysParamsMapper">
+
+	<sql id="sysParamsColumns">
+		a.id AS "id",
+		a.create_by AS "createBy.id",
+		a.create_date AS
+		"createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS
+		"updateDate",
+		a.type AS "type",
+		a.del_flag AS "delFlag",
+		a.name AS
+		"name",
+		a.code AS "code",
+		a.value AS "value",
+		a.remark AS "remark"
+	</sql>
+
+	<sql id="sysParamsJoins">
+
+	</sql>
+
+
+	<select id="get" resultType="SysParams">
+		SELECT
+		<include refid="sysParamsColumns" />
+		FROM card_params a
+		<include refid="sysParamsJoins" />
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="SysParams">
+		SELECT
+		<include refid="sysParamsColumns" />
+		FROM card_params a
+		<include refid="sysParamsJoins" />
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name = #{name}
+			</if>
+			<if test="code != null and code != ''">
+				AND a.code = #{code}
+			</if>
+			<if test="value != null and value != ''">
+				AND a.value = #{value}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="SysParams">
+		SELECT
+		<include refid="sysParamsColumns" />
+		FROM card_params a
+		<include refid="sysParamsJoins" />
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			${dataScope}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO card_params(
+		id,
+		create_by,
+		create_date,
+		update_by,
+		update_date,
+		type,
+		del_flag,
+		name,
+		code,
+		value,
+		remark
+		) VALUES (
+		#{id},
+		#{createBy.id},
+		#{createDate},
+		#{updateBy.id},
+		#{updateDate},
+		#{type},
+		#{delFlag},
+		#{name},
+		#{code},
+		#{value},
+		#{remark}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE card_params SET
+		update_by = #{updateBy.id},
+		update_date = #{updateDate},
+		type = #{type},
+		name = #{name},
+		code = #{code},
+		value = #{value},
+		remark = #{remark}
+		WHERE id = #{id}
+	</update>
+
+
+	<!--物理删除 -->
+	<update id="delete">
+		DELETE FROM card_params
+		WHERE id = #{id}
+	</update>
+
+	<!--逻辑删除 -->
+	<update id="deleteByLogic">
+		UPDATE card_params SET
+		del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="SysParams"
+		statementType="STATEMENT">
+		select * FROM card_params where ${propertyName} =
+		'${value}'
+	</select>
+
+</mapper>

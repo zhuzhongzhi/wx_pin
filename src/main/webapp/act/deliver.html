@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width,initial-scale=1,user-scalable=0">
+<title>填写收货地址</title>
+<!-- 引入 WeUI -->
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.1.2/js/jquery-weui.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.1.2/js/city-picker.min.js"></script>
+<link rel="stylesheet"
+	href="http://res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css" />
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/jquery-weui/1.1.2/css/jquery-weui.min.css">
+</head>
+<body>
+	<!-- 使用 -->
+	<div>
+		<div class="weui-cells__title">请填写收货信息</div>
+		<div class="weui-cells weui-cells_form">
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">联系人</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input class="weui-input" type="text" placeholder="请输入联系人"
+						id='contact' maxlength="30">
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">手机号</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input class="weui-input" type="tel" id='contactPhone'
+						placeholder="请输入联系电话" maxlength="15">
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">收货地区</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input class="weui-input" type="text" placeholder="请选择收货地区"
+						id='city-picker' />
+				</div>
+			</div>
+			<div class="weui-cell">
+				<div class="weui-cell__hd">
+					<label class="weui-label">详细地址</label>
+				</div>
+				<div class="weui-cell__bd">
+					<input class="weui-input" type="text" placeholder="请输入详细地址"
+						id='detailAddr' maxlength="250">
+				</div>
+			</div>
+			<div class="weui-cells__tips">商品将在提交申请后1至5个工作日内发货</div>
+		</div>
+		<button class="weui-btn weui-btn_primary" id='submit'
+			style="margin-top: 20px; width: 80%">确认提交</button>
+	</div>
+	<script>
+            var deliverInfo = {
+                "contact" : "", //联系人
+                "contactPhone" : "",  //联系电话
+                "province": "", //所在省
+                "city": "",  //所在市
+                "district": "", //所在区
+                "detailAddr":"", //详细地址
+                "card_id":"",  //礼品卡核销界面传过来的cardid
+                "encrypt_code":"", //礼品卡核销界面传过来的加密code
+                "openid":"" //礼品卡核销界面传过来的核销人的openid
+            }; 
+            $(document).ready(function(){
+               /*  if(window.location.search == ''){
+                    $.alert({
+                      title: '链接错误',
+                      text: '请从核销页面跳转至本界面',
+                      onOK: function () {
+                        window.location.href='http://www.doforsys.com';  
+                      }
+                    });
+                    return;
+                }; */
+                var url = window.location.search;
+                url = url.substring(1,url.length);
+                var strArr = parseQueryString(url);
+                deliverInfo.card_id = strArr.card_id;
+                deliverInfo.encrypt_code = strArr.encrypt_code;
+                deliverInfo.openid = strArr.openid;
+                console.log("card_id : " + deliverInfo.card_id);
+                console.log("encrypt_code : " + deliverInfo.encrypt_code);
+                console.log("openid : " + deliverInfo.openid);
+
+                $("#city-picker").cityPicker({
+                    title: "请选择收货地址",
+                    onChange: function(v) {
+                        deliverInfo.province = v.displayValue[0];
+                        deliverInfo.city = v.displayValue[1];
+                        deliverInfo.district = v.displayValue[2];
+                        //console.log(deliverInfo.province); 
+                        //console.log(deliverInfo.city);
+                        //console.log(deliverInfo.district);
+                    }
+                });   
+                function parseQueryString(url)
+                {
+	                var obj={};
+	                var keyvalue=[];
+	                var key="",value=""; 
+	                var paraString=url.substring(url.indexOf("?")+1,url.length).split("&");
+                	for(var i in paraString)
+                	{
+		                keyvalue=paraString[i].split("=");
+		                key=keyvalue[0];
+		                value=keyvalue[1];
+		                obj[key]=value; 
+		            } 
+                	return obj;
+                }
+            $("#submit").on('click',function(){
+                deliverInfo.contact = $("#contact").val();
+                deliverInfo.contactPhone = $("#contactPhone").val();
+                deliverInfo.detailAddr = $("#detailAddr").val();
+                console.log(deliverInfo.contact); 
+                console.log(deliverInfo.contactPhone);
+                console.log(deliverInfo.detailAddr);
+                if(deliverInfo.contact == ''){
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '联系人不能为空',
+                    });
+                    return;
+                }
+                else if(deliverInfo.contactPhone == '')  {
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '联系电话不能为空',
+                    });
+                    return;                    
+                }
+                else if(deliverInfo.province == '')  {
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '省份不能为空',
+                    });
+                    return;                    
+                }
+                else if(deliverInfo.city == '')  {
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '城市不能为空',
+                    });
+                    return;                    
+                }
+                else if(deliverInfo.district == '')  {
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '区县不能为空',
+                    });
+                    return;                    
+                }
+                else if(deliverInfo.detailAddr == '')  {
+                    $.alert({
+                      title: '输入内容有误',
+                      text: '详细地址不能为空',
+                    });
+                    return;                    
+                }
+                else{
+                    console.log(deliverInfo);
+                    $("#submit").attr("disabled","disabled");
+                    $("#submit").addClass("weui-btn_loading");
+                    $("#submit").prepend("<i class=\"weui-loading\"></i>");
+                    $.ajax({
+                         url: "http://www.google.com", 
+                         type: "POST",
+                         data: deliverInfo,
+                         success: function( data, textStatus, jqXHR ){
+                            console.log("发送成功:" + deliverInfo);
+                            $.alert({
+                              title: '提交成功',
+                              text: '您的收货信息已经提交，将于1至5个工作日内发货，请注意查收',
+                              onOK: function () {
+                                window.location.href='http://www.doforsys.com';  
+                              }                              
+                            });
+
+                        },
+                         error: function(jqXHR, textStatus, errorMsg){
+                            console.log(errorMsg);
+                            $.alert({
+                              title: '提交失败',
+                              text: '该礼品卡收货信息重复提交或填写有误，请稍后再试',
+                              onOK: function () {
+                                window.location.href='http://www.doforsys.com';  
+                              }                              
+                            });
+                        }
+                    });
+                }
+            }); 
+          });  
+        </script>
+</body>
+</html>

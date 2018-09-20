@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.pin.mapper.PinProductMapper">
+    
+	<sql id="pinProductColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.description AS "description",
+		a.specifications AS "specifications",
+		a.mall_price AS "mallPrice",
+		a.min_price AS "minPrice",
+		a.max_price AS "maxPrice",
+		a.pic_url AS "picUrl",
+		a.create_time AS "createTime",
+		a.status AS "status",
+		a.icon_url AS "iconUrl",
+		a.detail_url AS "detailUrl"
+	</sql>
+	
+	<sql id="pinProductJoins">
+		
+	</sql>
+	
+    
+	<select id="get" resultType="PinProduct" >
+		SELECT 
+			<include refid="pinProductColumns"/>
+		FROM pin_product a
+		<include refid="pinProductJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PinProduct" >
+		SELECT 
+			<include refid="pinProductColumns"/>
+		FROM pin_product a
+		<include refid="pinProductJoins"/>
+		<where>
+			
+			${dataScope}
+			<if test="id != null and id != ''">
+				AND a.id = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PinProduct" >
+		SELECT 
+			<include refid="pinProductColumns"/>
+		FROM pin_product a
+		<include refid="pinProductJoins"/>
+		<where>
+			
+			${dataScope}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO pin_product(
+			id,
+			name,
+			description,
+			specifications,
+			mall_price,
+			min_price,
+			max_price,
+			pic_url,
+			create_time,
+			status,
+			icon_url,
+			detail_url
+		) VALUES (
+			#{id},
+			#{name},
+			#{description},
+			#{specifications},
+			#{mallPrice},
+			#{minPrice},
+			#{maxPrice},
+			#{picUrl},
+			#{createTime},
+			#{status},
+			#{iconUrl},
+			#{detailUrl}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE pin_product SET 	
+			name = #{name},
+			description = #{description},
+			specifications = #{specifications},
+			mall_price = #{mallPrice},
+			min_price = #{minPrice},
+			max_price = #{maxPrice},
+			pic_url = #{picUrl},
+			create_time = #{createTime},
+			status = #{status},
+			icon_url = #{iconUrl},
+			detail_url = #{detailUrl}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!--物理删除-->
+	<update id="delete">
+		DELETE FROM pin_product
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除-->
+	<update id="deleteByLogic">
+		UPDATE pin_product SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<!-- 根据实体名称和字段名称和字段值获取唯一记录 -->
+	<select id="findUniqueByProperty" resultType="PinProduct" statementType="STATEMENT">
+		select * FROM pin_product  where ${propertyName} = '${value}'
+	</select>
+	
+</mapper>
